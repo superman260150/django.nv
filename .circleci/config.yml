@@ -33,13 +33,10 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run:
-          command: docker login -u  -p  
-      - run:
-          command: docker build -t /django.nv
-      - run:
-          command: docker push /django.nv
-
+      - run: |
+          echo  | docker login -u  --password-stdin
+          docker build -t /django.nv .   # Build the application into Docker image
+          docker push /django.nv         # Push the image into registry
   prod:
     docker:
       - image: python:3.6
@@ -58,4 +55,3 @@ workflows:
           type: approval
           requires:
             - integration
-
