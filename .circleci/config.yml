@@ -1,12 +1,10 @@
-version: 2.1
-
 jobs:
   build:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:stable                   # similar to "image" in GitLab
     steps:
       - checkout
-      - run: echo "This is a build step"
+      - run: echo "This is a build step"          # similar to "script" in GitLab
 
   test:
     docker:
@@ -23,17 +21,8 @@ jobs:
       - run:
           command: |
             echo "This is an integration step"
-            exit 1 || true
-
-  artifact:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          command: echo "hello" > hello.txt
-      - store_artifacts:
-          path: hello.txt
+            exit 1
+          when: on_fail # Even if the job fails, continue to the next jobs
 
   prod:
     docker:
@@ -42,24 +31,50 @@ jobs:
       - checkout
       - run: echo "This is a deploy step"
 
+  artifact:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run: echo "hello" > hello.txt
+      - store_artifacts:
+          path: hello.txt
+          destination: artifact-file
+
 workflows:
+  version: 2
   django:
     jobs:
-      - build
-
+      - build:
+          filters:          # Run the job with a specific branch
+            branches:
+              only:
+                - main
       - test:
           requires:
             - build
-
+          filters:
+            branches:
+              only:
+                - main
       - integration:
           requires:
             - test
-
-      - artifact:
-          requires:
-            - integration
-
+          filters:
+            branches:
+              only:
+                - main
       - prod:
           requires:
-            - artifact
-          type: approval
+            - integration
+          filters:
+            branches:
+              only:
+                - main
+      - artifact:
+          requires:
+            - prod
+          filters:
+            branches:
+              only:
+                - main
