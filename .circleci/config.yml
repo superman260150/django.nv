@@ -18,21 +18,20 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - run:
+      - run:             # make this job don't fail by appendingn || true
           command: |
-            echo "This is an integration step"
+            echo "This is an integration step"  
             exit 1 || true 
-           # make this job don't fail by appendingn || true
-           
+
   artifact:
-	  docker:
-		  - image: cimg/base:stable
-	   steps:
-		   - checkout
-		   - run:
-				   command: echo "hello">hello.txt
-       - store_artifacts:
-	         path: hello.txt
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          command: echo "hello">hello.txt
+      - store_artifacts:
+          path: hello.txt
 
   prod:
     docker:
@@ -46,16 +45,16 @@ workflows:
   django:
     jobs:
       - build
-      - test
-		      requires: # sequential jobs
-		          - build
-      - integration
- 		      requires:
-		          - test
-      - artifact
- 		      requires:
-		          - integration
+      - test:
+          requires: # sequential jobs
+            - build
+      - integration:
+          requires:
+            - test
+      - artifact:
+          requires:
+            - integration
       - prod:
- 		      requires:
-		          - artifact
+          requires:
+            - artifact
           type: approval
