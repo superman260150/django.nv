@@ -41,7 +41,7 @@ jobs:
       - run: echo "This is a deploy step"
 
 workflows:
-  version: 2
+  version: 2.1
   django:
     jobs:
       - build
