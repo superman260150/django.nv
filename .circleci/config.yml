@@ -34,9 +34,11 @@ jobs:
     steps:
       - checkout
       - run: |
-          echo  | docker login -u  --password-stdin
-          docker build -t /django.nv .   # Build the application into Docker image
-          docker push /django.nv         # Push the image into registry
+            echo "USERNAME length: 0"
+            echo "PASSWORD length: 0"
+          # echo  | docker login -u  --password-stdin
+          # docker build -t /django.nv .   # Build the application into Docker image
+          # docker push /django.nv         # Push the image into registry
   prod:
     docker:
       - image: python:3.6
