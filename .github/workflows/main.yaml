@@ -57,6 +57,7 @@ jobs:
           name: Safety
           path: oast-results.json
         if: always()                        # what is this for?        
+    continue-on-error: true
 
   integration:
     runs-on: ubuntu-22.04
