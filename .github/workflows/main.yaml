@@ -46,11 +46,11 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
-      - |
-        cat > .safety-policy.yml <<EOF
-        security:
-          ignore-vulnerabilities: {}
-        EOF
+      - run: |
+          cat > .safety-policy.yml <<EOF
+          security:
+            ignore-vulnerabilities: {}
+          EOF
       - run: docker run --rm -v /django.nv:/src hysnsec/safety check -r requirements.txt --json > oast-results.json
       - uses: actions/upload-artifact@v4
         with:
